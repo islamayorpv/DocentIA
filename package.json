@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocentIA</title>
+<style>
+  :root { --green:#0b7a3e; --green-d:#075a2d; --gold:#f4b400; --bg:#f2f6f3; --ink:#17251d; --muted:#6b7a71; --line:#dfe7e2; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:var(--bg); color:var(--ink); }
+  .top { background:linear-gradient(135deg,var(--green),var(--green-d)); color:#fff; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; }
+  .logo { font-weight:800; font-size:24px; letter-spacing:-.5px; } .logo span { color:var(--gold); } .logo.big { font-size:40px; color:var(--green); text-align:center; margin-bottom:6px; }
+  .sub { opacity:.9; font-size:14px; }
+  .wrap { max-width:1150px; margin:0 auto; padding:20px; } .narrow { max-width:520px; } .center { text-align:center; }
+  .card { background:#fff; border-radius:18px; padding:22px; box-shadow:0 4px 18px rgba(20,60,35,.08); margin-bottom:18px; }
+  h1,h2 { margin:0 0 10px; } h2 { font-size:20px; } .muted { color:var(--muted); font-size:14px; margin:4px 0 12px; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; } .cols.game { grid-template-columns:2fr 1fr; }
+  @media (max-width:800px){ .cols,.cols.game{ grid-template-columns:1fr; } }
+  input[type=text],input[type=number],input:not([type]),select { width:100%; padding:14px; font-size:17px; border:2px solid var(--line); border-radius:12px; margin:8px 0 14px; font-family:inherit; }
+  input:focus,select:focus { outline:none; border-color:var(--green); }
+  .btn { background:var(--green); color:#fff; border:0; border-radius:12px; padding:14px 22px; font-size:17px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .btn:hover { background:var(--green-d); } .btn:disabled { background:#b9c6bf; cursor:not-allowed; }
+  .btn.gold { background:var(--gold); color:#3b2b00; } .btn.gold:hover { background:#dca200; }
+  .btn.ghost { background:#fff; color:var(--green); border:2px solid var(--green); } .btn.small { padding:8px 14px; font-size:14px; }
+  .form-q { margin-bottom:18px; } .form-q b { display:block; margin-bottom:8px; }
+  .radio { display:block; padding:12px 14px; border:2px solid var(--line); border-radius:12px; margin-bottom:8px; cursor:pointer; }
+  .radio input { margin-right:10px; } .radio:has(input:checked) { border-color:var(--green); background:#e9f6ee; }
+  .emoji { font-size:54px; }
+  .qr { width:min(100%,340px); border-radius:12px; } .url { word-break:break-all; font-weight:600; color:var(--green); margin:10px 0; }
+  .count { background:var(--green); color:#fff; border-radius:20px; padding:2px 12px; font-size:16px; vertical-align:middle; }
+  .plist { display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; }
+  .pl { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:10px 12px; background:#f7faf8; border-radius:10px; }
+  .pl small { color:var(--muted); width:100%; padding-left:20px; }
+  .dot { width:10px; height:10px; border-radius:50%; background:#c4cfc8; } .dot.on { background:#2fbf71; }
+  .badge { font-size:12px; padding:3px 9px; border-radius:20px; background:#fff3cd; color:#7a5a00; font-weight:700; } .badge.ok { background:#d3f2e0; color:#0b6b36; }
+  .controls { display:flex; gap:12px; flex-wrap:wrap; align-items:center; } .controls label { font-weight:600; } .controls select { width:auto; margin:0 0 0 8px; padding:10px; }
+  .teams { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px; margin-bottom:18px; }
+  .team { background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 18px rgba(20,60,35,.08); border-top:8px solid var(--c); }
+  .th { font-size:19px; font-weight:800; padding:12px 14px 4px; color:var(--c); } .tm { padding:8px 14px; border-top:1px solid var(--line); } .tm small { display:block; color:var(--muted); }
+  .tm.me { background:#fff8dc; }
+  .qhead { display:flex; justify-content:space-between; font-weight:700; color:var(--muted); margin-bottom:8px; }
+  .timer { font-size:22px; color:var(--green); } .bar { height:10px; background:var(--line); border-radius:10px; overflow:hidden; margin-bottom:14px; }
+  .bar i { display:block; height:100%; width:100%; background:var(--gold); transition:width .25s linear; }
+  .qtext { font-size:28px; line-height:1.25; margin:10px 0 18px; }
+  .aopts { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .aopt { padding:22px; border-radius:14px; background:#f1f5f2; font-size:22px; font-weight:700; text-align:center; border:3px solid transparent; }
+  .aopt small { display:block; font-size:13px; color:var(--muted); font-weight:500; margin-top:4px; }
+  .aopt.good, .gopt.good { background:#d3f2e0; border-color:#2fbf71; }
+  .info { background:#fff8dc; padding:12px 14px; border-radius:12px; }
+  .rank { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; background:#f7faf8; margin-bottom:8px; border-left:8px solid var(--c); }
+  .rank.me { background:#fff8dc; } .rank b { flex:1; } .rank em { font-style:normal; color:#0b6b36; font-weight:700; font-size:13px; }
+  .gopt { display:block; width:100%; padding:22px; margin-bottom:12px; font-size:21px; font-weight:700; border-radius:14px; border:3px solid var(--line); background:#fff; cursor:pointer; font-family:inherit; color:var(--ink); }
+  .gopt:active:not(:disabled) { transform:scale(.98); } .gopt.picked { border-color:var(--green); background:#e9f6ee; }
+  .gopt.dim { opacity:.5; } .gopt.bad { background:#fde2e2; border-color:#e03131; } .gopt:disabled { cursor:default; }
+  .chip { display:inline-block; padding:5px 12px; border-radius:20px; color:#fff; font-weight:700; font-size:14px; background:var(--c); }
+  .result { padding:14px; border-radius:12px; font-weight:700; margin:12px 0; text-align:center; } .result.ok { background:#d3f2e0; color:#0b6b36; } .result.ko { background:#fde2e2; color:#a61e1e; }
+  #toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(100px); background:#17251d; color:#fff; padding:12px 20px; border-radius:12px; transition:.3s; z-index:9; max-width:90%; }
+  #toast.show { transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div id="app"><div class="wrap center"><p class="muted">Conectando…</p></div></div>
+<div id="toast"></div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const isAdmin = location.pathname.startsWith('/admin');
+const socket = io();
+const app = document.getElementById('app');
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = (s) => document.querySelector(s);
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.className = 'show'; setTimeout(() => (t.className = ''), 3200); }
+const topbar = (sub) => `<div class="top"><div class="logo">Docent<span>IA</span></div><div class="sub">${sub}</div></div>`;
+const medal = (i) => ['🥇', '🥈', '🥉'][i] || (i + 1) + 'º';
+
+// ---------- Temporizador ----------
+let timerInt = null, endAt = 0, totalTime = 20;
+function startTimer(msLeft, total) { endAt = Date.now() + msLeft; totalTime = total; clearInterval(timerInt); tick(); timerInt = setInterval(tick, 250); }
+function tick() {
+  const s = Math.max(0, (endAt - Date.now()) / 1000);
+  const n = $('#timeNum'); if (n) n.textContent = Math.ceil(s);
+  const b = $('#timeBar'); if (b) b.style.width = (s / totalTime) * 100 + '%';
+  if (s <= 0) clearInterval(timerInt);
+}
+
+// =====================================================
+//                    PARTICIPANTE
+// =====================================================
+let quiz = null, st = null, screenKey = '', resuming = false;
+
+function setScreen(key, html) {
+  if (key === screenKey && (key === 'name' || key === 'form')) return false; // no borrar lo que se está escribiendo
+  screenKey = key; app.innerHTML = html; return true;
+}
+
+function rankingHTML(list, myTeamId) {
+  return list.map((t, i) => `<div class="rank ${t.id === myTeamId ? 'me' : ''}" style="--c:${t.color}"><span>${medal(i)}</span><b>${esc(t.name)}</b>${t.gain ? `<em>+${t.gain}</em>` : ''}<span>${t.score} pts</span></div>`).join('');
+}
+
+function renderPlayer() {
+  if (resuming) return;
+  if (!st) {
+    const html = `<div class="wrap narrow"><div class="card"><div class="logo big">Docent<span>IA</span></div>
+      <p class="muted center">¡Bienvenido/a! Para empezar, dinos cómo te llamas.</p>
+      <input id="nameIn" maxlength="30" placeholder="Tu nombre" autocomplete="given-name">
+      <button class="btn" style="width:100%" id="goBtn">Entrar</button></div></div>`;
+    if (setScreen('name', html)) {
+      const go = () => {
+        const name = $('#nameIn').value.trim();
+        if (!name) return toast('Escribe tu nombre');
+        socket.emit('player:register', { name }, (res) => {
+          if (!res.ok) return toast(res.error);
+          localStorage.setItem('docentia_token', res.token);
+        });
+      };
+      $('#goBtn').onclick = go;
+      $('#nameIn').addEventListener('keydown', (e) => e.key === 'Enter' && go());
+    }
+    return;
+  }
+
+  if (!st.me.ready) {
+    if (st.phase !== 'lobby') {
+      setScreen('closed', `<div class="wrap narrow center"><div class="card"><div class="emoji">⏳</div><h2>Inscripciones cerradas</h2><p class="muted">El juego ya ha comenzado sin tu cuestionario. ¡La próxima vez llega a tiempo!</p></div></div>`);
+      return;
+    }
+    if (!quiz) return;
+    const qs = quiz.map((q, i) => `<div class="form-q"><b>${i + 1}. ${esc(q.text)}</b>${q.options.map((o, j) => `<label class="radio"><input type="radio" name="q${i}" value="${j}">${esc(o)}</label>`).join('')}</div>`).join('');
+    const provinces = ['Almería', 'Cádiz', 'Córdoba', 'Granada', 'Huelva', 'Jaén', 'Málaga', 'Sevilla'];
+    const html = `<div class="wrap narrow"><div class="card"><h2>Hola, ${esc(st.me.name)} 👋</h2><p class="muted">Cuéntanos un poco sobre ti para formar equipos equilibrados.</p>${qs}
+      <div class="form-q"><b>5. ¿De qué localidad eres?</b><input id="locIn" list="provs" maxlength="40" placeholder="Escribe o elige una localidad"><datalist id="provs">${provinces.map((p) => `<option value="${p}">`).join('')}</datalist></div>
+      <div class="form-q"><b>6. ¿Cuántos años llevas en tu puesto actual?</b><input id="yrsIn" type="number" min="0" max="60" inputmode="numeric" placeholder="Ej: 5"></div>
+      <button class="btn" style="width:100%" id="sendBtn">Enviar</button></div></div>`;
+    if (setScreen('form', html)) {
+      $('#sendBtn').onclick = () => {
+        const answers = quiz.map((_, i) => { const c = document.querySelector(`input[name=q${i}]:checked`); return c ? +c.value : -1; });
+        const location = $('#locIn').value.trim(); const years = $('#yrsIn').value;
+        if (answers.includes(-1)) return toast('Responde las 4 primeras preguntas');
+        if (!location) return toast('Indica tu localidad');
+        if (years === '' || +years < 0) return toast('Indica tus años en el puesto');
+        socket.emit('player:form', { answers, location, years: +years }, (res) => { if (!res.ok) toast(res.error); });
+      };
+    }
+    return;
+  }
+
+  const team = st.team;
+  if (st.phase === 'lobby') {
+    setScreen('wait', `<div class="wrap narrow center"><div class="card"><div class="emoji">✅</div><h2>¡Listo, ${esc(st.me.name)}!</h2><p class="muted">Ya estás inscrito/a. Espera a que el administrador forme los grupos…</p></div></div>`);
+  } else if (st.phase === 'grouped' && team) {
+    setScreen('team', `<div class="wrap narrow"><div class="card" style="border-top:10px solid ${team.color}"><p class="muted center">Tu equipo es</p><h1 class="center" style="color:${team.color};font-size:38px">${esc(team.name)}</h1>
+      ${team.members.map((m) => `<div class="tm ${m.me ? 'me' : ''}"><b>${esc(m.name)}</b>${m.me ? ' (tú)' : ''}</div>`).join('')}
+      <p class="muted center" style="margin-top:16px">Siéntate con tu equipo. ¡El juego empezará enseguida!</p></div></div>`);
+  } else if (st.phase === 'playing' && team && st.question) {
+    renderPlayerGame();
+  } else if (st.phase === 'finished' && st.ranking) {
+    const pos = st.ranking.findIndex((t) => t.id === (team && team.id));
+    setScreen('final', `<div class="wrap narrow"><div class="card center"><div class="emoji">🏆</div><h2>¡Fin del juego!</h2>${team ? `<p>Tu equipo, <b>${esc(team.name)}</b>, ha quedado en ${medal(pos)}</p>` : ''}</div><div class="card">${rankingHTML(st.ranking, team && team.id)}</div></div>`);
+  } else {
+    setScreen('wait2', `<div class="wrap narrow center"><div class="card"><div class="emoji">⏳</div><h2>Esperando…</h2></div></div>`);
+  }
+}
+
+function renderPlayerGame() {
+  const q = st.question, t = st.team, rev = q.status === 'revealed';
+  const opts = q.options.map((o, i) => {
+    let cls = 'gopt';
+    if (rev) { if (i === q.correct) cls += ' good'; else if (q.mine && q.mine.choice === i) cls += ' bad'; }
+    else if (q.mine) cls += q.mine.choice === i ? ' picked' : ' dim';
+    return `<button class="${cls}" data-i="${i}" ${rev || q.mine ? 'disabled' : ''}>${esc(o)}</button>`;
+  }).join('');
+  let msg = '';
+  if (!rev) msg = q.mine ? `<p class="muted center">✔ Respuesta enviada por <b>${esc(q.mine.by)}</b>. Esperando al resto de equipos…</p>` : `<p class="muted center">Poneos de acuerdo en equipo. ¡La primera respuesta del equipo cuenta!</p>`;
+  else {
+    const r = (q.results || []).find((x) => x.teamId === t.id);
+    msg = r && r.correct ? `<div class="result ok">¡Correcto! +${r.gain} puntos</div>` : `<div class="result ko">${r && r.choice !== null ? 'Respuesta incorrecta' : 'Tiempo agotado'}</div>`;
+    if (q.info) msg += `<p class="info">💡 ${esc(q.info)}</p>`;
+  }
+  const html = `<div class="wrap narrow"><div class="card">
+    <div class="qhead"><span class="chip" style="--c:${t.color}">${esc(t.name)}</span><span>${q.index + 1} / ${q.total}</span>${rev ? '' : '<span class="timer"><span id="timeNum"></span>s</span>'}</div>
+    ${rev ? '' : '<div class="bar"><i id="timeBar"></i></div>'}
+    <h1 style="font-size:24px;line-height:1.3">${esc(q.text)}</h1>${opts}${msg}</div>
+    ${rev && st.ranking ? `<div class="card"><h2>Clasificación</h2>${rankingHTML(st.ranking, t.id)}</div>` : ''}</div>`;
+  screenKey = 'game'; app.innerHTML = html;
+  app.querySelectorAll('.gopt[data-i]').forEach((b) => (b.onclick = () => socket.emit('player:answer', { choice: +b.dataset.i })));
+  if (!rev) startTimer(q.msLeft, q.totalTime);
+}
+
+// =====================================================
+//                    ADMINISTRADOR
+// =====================================================
+let adm = null, joinInfo = null, teamSize = 4, loggedIn = false;
+const A = (ev, data = {}, after) => socket.emit(ev, data, (res) => { if (res && !res.ok) toast(res.error || 'Error'); else if (after) after(res); });
+const level = (n) => (n <= 4 ? 'Básico' : n <= 8 ? 'Intermedio' : 'Avanzado');
+
+function renderLogin() {
+  loggedIn = false;
+  app.innerHTML = `${topbar('Panel de administrador')}<div class="wrap narrow"><div class="card"><h2>Acceso de administrador</h2><p class="muted">Introduce la contraseña.</p>
+    <input type="password" id="pinIn" placeholder="Contraseña" style="width:100%;padding:14px;font-size:17px;border:2px solid var(--line);border-radius:12px;margin:8px 0 14px">
+    <button class="btn" style="width:100%" id="loginBtn">Entrar</button></div></div>`;
+  const go = () => { const pin = $('#pinIn').value; socket.emit('admin:login', pin, (res) => onLogin(res, pin)); };
+  $('#loginBtn').onclick = go; $('#pinIn').addEventListener('keydown', (e) => e.key === 'Enter' && go());
+}
+function onLogin(res, pin) {
+  if (res.ok) { loggedIn = true; sessionStorage.setItem('docentia_pin', pin); renderAdmin(); }
+  else { sessionStorage.removeItem('docentia_pin'); renderLogin(); toast('Contraseña incorrecta'); }
+}
+
+function renderAdmin() {
+  if (!loggedIn) return;
+  if (!adm) { app.innerHTML = '<div class="wrap center"><p class="muted">Cargando…</p></div>'; return; }
+  clearInterval(timerInt);
+  if (adm.phase === 'lobby' || adm.phase === 'grouped') adminLobby();
+  else if (adm.phase === 'playing') adminGame();
+  else adminFinal();
+}
+
+function adminLobby() {
+  const ready = adm.players.filter((p) => p.ready).length, grouped = adm.phase === 'grouped';
+  const list = adm.players.length
+    ? adm.players.map((p) => `<div class="pl"><span class="dot ${p.online ? 'on' : ''}"></span><b>${esc(p.name)}</b>${p.ready ? '<span class="badge ok">Listo ✓</span>' : '<span class="badge">Rellenando…</span>'}${p.ready ? `<small>IA: ${level(p.ai)} (${p.ai}/12) · ${esc(p.location)} · ${p.years} años en el puesto</small>` : ''}</div>`).join('')
+    : '<p class="muted">Aún no se ha conectado nadie. ¡Enseña el QR!</p>';
+  const teams = grouped ? `<div class="teams">${adm.teams.map((t) => `<div class="team" style="--c:${t.color}"><div class="th">${esc(t.name)}</div>${t.members.map((m) => `<div class="tm"><b>${esc(m.name)}</b><small>IA ${m.ai}/12 · ${esc(m.location)} · ${m.years} años</small></div>`).join('')}</div>`).join('')}</div>` : '';
+  app.innerHTML = `${topbar('Panel de administrador')}<div class="wrap">
+    <div class="cols">
+      <div class="card center"><h2>Escanea para unirte</h2>
+        ${joinInfo ? `<img class="qr" src="${joinInfo.qr}" alt="QR"><div class="url">${esc(joinInfo.url)}</div><button class="btn small ghost" id="copyBtn">Copiar enlace</button>` : '<p class="muted">Generando QR…</p>'}</div>
+      <div class="card"><h2>${grouped ? 'Participantes' : 'Sala de espera'} <span class="count">${adm.players.length}</span></h2><p class="muted">${ready} con el cuestionario completo</p><div class="plist">${list}</div></div>
+    </div>
+    ${teams}
+    <div class="card controls">
+      <label>Personas por grupo <select id="sizeSel">${[3, 4, 5, 6].map((n) => `<option value="${n}" ${n === teamSize ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+      <button class="btn" id="genBtn" ${ready < 2 ? 'disabled' : ''}>🔀 ${grouped ? 'Volver a generar grupos' : 'Generar grupos'}</button>
+      ${grouped ? '<button class="btn gold" id="startBtn">▶ Iniciar juego</button><button class="btn ghost" id="reopenBtn">Reabrir sala</button>' : ''}
+    </div></div>`;
+  $('#sizeSel').onchange = (e) => (teamSize = +e.target.value);
+  $('#genBtn').onclick = () => A('admin:generate', { size: teamSize }, (r) => r.left > 0 && toast(`${r.left} persona(s) sin terminar el cuestionario quedan fuera de los grupos`));
+  if ($('#startBtn')) $('#startBtn').onclick = () => A('admin:start');
+  if ($('#reopenBtn')) $('#reopenBtn').onclick = () => A('admin:reopen');
+  if ($('#copyBtn')) $('#copyBtn').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(joinInfo.url); toast('Enlace copiado'); };
+}
+
+function adminGame() {
+  const q = adm.question, rev = q.status === 'revealed', last = q.index + 1 >= q.total;
+  const counts = q.options.map((_, i) => (rev ? q.results.filter((r) => r.choice === i).length : 0));
+  const board = adm.teams.slice().sort((a, b) => b.score - a.score);
+  app.innerHTML = `${topbar('Juego en curso · Cultura General Andaluza')}<div class="wrap"><div class="cols game">
+    <div class="card">
+      <div class="qhead"><span>Pregunta ${q.index + 1} / ${q.total}</span>${rev ? '' : '<span class="timer"><span id="timeNum"></span>s</span>'}</div>
+      ${rev ? '' : '<div class="bar"><i id="timeBar"></i></div>'}
+      <h1 class="qtext">${esc(q.text)}</h1>
+      <div class="aopts">${q.options.map((o, i) => `<div class="aopt ${rev && i === q.correct ? 'good' : ''}">${esc(o)}${rev ? `<small>${counts[i]} equipo(s)</small>` : ''}</div>`).join('')}</div>
+      ${rev && q.info ? `<p class="info">💡 ${esc(q.info)}</p>` : ''}
+      <p class="muted">Han respondido ${q.answered} de ${q.teamCount} equipos</p>
+      ${rev ? `<button class="btn gold" id="nextBtn">${last ? '🏆 Ver resultados finales' : 'Siguiente pregunta →'}</button>` : '<button class="btn" id="revealBtn">Mostrar respuesta ahora</button>'}
+    </div>
+    <div class="card"><h2>Clasificación</h2>${board.map((t, i) => `<div class="rank" style="--c:${t.color}"><span>${medal(i)}</span><b>${esc(t.name)}</b>${rev && t.lastGain ? `<em>+${t.lastGain}</em>` : ''}<span>${t.score}</span></div>`).join('')}</div>
+  </div></div>`;
+  if ($('#nextBtn')) $('#nextBtn').onclick = () => A('admin:next');
+  if ($('#revealBtn')) $('#revealBtn').onclick = () => A('admin:reveal');
+  if (!rev) startTimer(q.msLeft, q.totalTime);
+}
+
+function adminFinal() {
+  const board = adm.teams.slice().sort((a, b) => b.score - a.score);
+  app.innerHTML = `${topbar('Resultados finales')}<div class="wrap narrow"><div class="card center"><div class="emoji">🏆</div><h1>¡Equipo ganador: ${esc(board[0].name)}!</h1></div>
+    <div class="card">${board.map((t, i) => `<div class="rank" style="--c:${t.color}"><span>${medal(i)}</span><b>${esc(t.name)}</b><span>${t.score} pts</span></div>`).join('')}</div>
+    <button class="btn ghost" id="resetBtn">Nueva sesión (borrar todo)</button></div>`;
+  $('#resetBtn').onclick = () => confirm('Se borrarán participantes y puntuaciones. ¿Continuar?') && A('admin:reset');
+}
+
+// =====================================================
+//                    CONEXIÓN
+// =====================================================
+socket.on('connect', () => {
+  if (isAdmin) {
+    const pin = sessionStorage.getItem('docentia_pin');
+    if (pin) socket.emit('admin:login', pin, (res) => onLogin(res, pin)); else renderLogin();
+  } else {
+    const token = localStorage.getItem('docentia_token');
+    if (token) {
+      resuming = true;
+      socket.emit('player:resume', token, (res) => {
+        resuming = false;
+        if (!res.ok) { localStorage.removeItem('docentia_token'); st = null; }
+        renderPlayer();
+      });
+    } else renderPlayer();
+  }
+});
+socket.on('player:state', (s) => { st = s; renderPlayer(); });
+socket.on('player:reset', () => { localStorage.removeItem('docentia_token'); st = null; screenKey = ''; renderPlayer(); });
+socket.on('admin:state', (s) => { adm = s; renderAdmin(); });
+
+if (isAdmin) fetch('/api/join-info').then((r) => r.json()).then((j) => { joinInfo = j; renderAdmin(); });
+else fetch('/api/quiz').then((r) => r.json()).then((q) => { quiz = q; renderPlayer(); });
+</script>
+</body>
+</html>
